@@ -43,8 +43,8 @@ boolean sizeChange = false;
 //String songName = "Mystic Rhythms";
 //String songName = "CLOSE ENCOUNTERS OF THE THIRD KIND (Disco 45-) HIGH QUALITY";
 //String songName = "No Cures";
-String songName = "05 - Sweet Emotion";
-//String songName = "Apple Loops";
+//String songName = "05 - Sweet Emotion";
+String songName = "Apple Loops";
 
 void setup()
 {
@@ -111,7 +111,7 @@ void draw()
     ed.numOfLines = 16;
     
     mm.reposition();
-    ed.reposition(); //<>//
+    ed.reposition(); //<>// //<>//
     epc.reposition();
   }
   background(backgroundNormal);  // clear screen

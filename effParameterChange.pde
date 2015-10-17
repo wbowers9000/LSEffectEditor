@@ -5,6 +5,8 @@ class effParameterChange {
   float yPos;  // one line, all y positions are the same
   float mHeight;
   float spaceBetweenParam;
+  
+  boolean focus;
 
   droplet drplt = new droplet();
   textAndBoxSize tbs = new textAndBoxSize();
@@ -13,12 +15,13 @@ class effParameterChange {
   boolean mouseOver(int mX, int mY, int action) {
     boolean rtn = mY >= yPos && mY < (yPos + mHeight);
     if(rtn) {
-      if(action == 0) {println("mouse in parameter change"); return rtn;}
-      if(action == 1) {/* do something */; return rtn;}
+      if(action == 0) {/*println("mouse in parameter change");*/ return rtn;}
+      if(action == 1) {if (!focus) {focus = true; println("focusing");} return rtn;}
+    } else {
+      if(action == 1) {if (focus) {focus = false; println("not focusing");} return rtn;}
     }
     return rtn;
   }
-    
 
   void reposition() {
     textSize(globalFontSize);
@@ -43,6 +46,8 @@ class effParameterChange {
     int inputCharCnt;
     float inputWidth;
     float totalWidth;
+    boolean focusMenu;
+    boolean focusOption;
 
     param() {
       desc = "";
@@ -73,14 +78,20 @@ class effParameterChange {
       totalWidth = xPosInp + inputWidth;
     }
     
+    void focusing(boolean f, boolean fo) {
+      focusMenu = f;
+      focusOption = fo;
+    }
+    
     void drawMe() {
       fill(fillNormal);
-      if(mouseOver(mouseX, mouseY, 0)) {
+      if(mouseOver(mouseX, mouseY, 0) || focus ) {
         fill(backgroundHighlight);
         rect(xPosInp, yPos, inputWidth, tbs.totalHeight);
         fill(fillHighlight);
       }
       text(desc, xPos + tbs.textXPos, yPos + tbs.textYPos);
+      text("foo", xPosInp + (inputWidth/2), yPos + tbs.textYPos);
     }
 /*    
       textSize(tbs.mTextSize);
@@ -147,6 +158,13 @@ class effParameterChange {
         params[i].xPosInp += xp;
         xp += params[i].totalWidth + spaceBetweenParam;
       }
+    }
+    
+    void focusing(boolean f) {
+      for(int i = 0; i < params.length; i++) {
+        params[i].focusing(f, false);
+      }
+      if(f) params[0].focusing(f, true);
     }
 
     void drawMe() {

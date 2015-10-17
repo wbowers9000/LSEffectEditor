@@ -8,7 +8,7 @@ class mainMenu {
   boolean mouseOver(int mX, int mY, int action) {
     boolean rtn = mY >= yPos && mY < (yPos + mHeight);
     if(rtn) {
-      if(action == 0) {println("mouse in mainMenu"); return rtn;}
+      if(action == 0) {/*println("mouse in mainMenu");*/ return rtn;}
       if(action == 1) {doTask(menuItemClicked(mX, mY)); return rtn;}
     }
     return rtn;

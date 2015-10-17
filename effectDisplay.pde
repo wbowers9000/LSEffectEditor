@@ -18,7 +18,7 @@ class effectDisplay {
   boolean mouseOver(int mX, int mY, int action) {
     boolean rtn = mY >= yPos && mY < (yPos + mHeight);
     if(rtn) {
-      if(action == 0) {println("mouse in effectDisplay"); return rtn;}
+      if(action == 0) {/*println("mouse in effectDisplay");*/ return rtn;}
       if(action == 1) {/* do something */ return rtn;}
     }
     return rtn;
