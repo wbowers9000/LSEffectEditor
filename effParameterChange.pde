@@ -2,6 +2,7 @@
 // before calling drawMe()
 
 class effParameterChange {
+  boolean focus;
   float yPos;  // one line, all y positions are the same
   float mHeight;
   float spaceBetweenParam;
@@ -16,9 +17,15 @@ class effParameterChange {
     boolean rtn = mY >= yPos && mY < (yPos + mHeight);
     if(rtn) {
       if(action == 0) {/*println("mouse in parameter change");*/ return rtn;}
-      if(action == 1) {/* do something */; return rtn;}
+      if(action == 1) {focus = true; drplt.focusing(focus); return rtn;}
+    } else {
+      if(action == 1) {focus = false; drplt.focusing(focus); return rtn;}
     }
     return rtn;
+  }
+  
+  boolean checkFocus() {
+    return focus;
   }
 
   void reposition() {
@@ -29,6 +36,10 @@ class effParameterChange {
   
   void drawMe() {
     drplt.drawMe();
+  }
+  
+  void keypress(int kc, char k) {
+    drplt.keypress(kc, k);
   }
   
   //--------------------------------------------------------------------
@@ -99,6 +110,18 @@ class effParameterChange {
         params[i].xPosInp += xp;
       }
     }
+    
+    void focusing(boolean f) {
+      for(int i = 0; i < params.length; i++) {
+        params[i].focusing(f, params[i].mouseOver(mouseX, mouseY));
+      }
+    }
+    
+    void keypress(int kc, char k) {
+      for(int i = 0; i < params.length; i++) {
+        if (params[i].focusOption) params[i].keypress(kc, k);
+      }
+    }
 
     void drawMe() {
       for(int i = 0; i < params.length; i++) {
@@ -130,6 +153,7 @@ class effParameterChange {
       xPosInp = 0;
       inputWidth = 0;
       totalWidth = 0;
+      input = "";
     }
     
     void doSetup(String inDesc, char inType, int charCnt) {
@@ -164,12 +188,26 @@ class effParameterChange {
       fill(inputBoxColor);
       if(mouseOv) fill(backgroundHighlight);
       rect(xPosInp, yPosInp, inputWidth, tbs.totalHeight);
+      fill(fillNormal);
+      text(input, xPosInp, yPos + tbs.textYPos);
     }
     
     boolean mouseOver(int mX, int mY) {
       if(mX >= xPos && mX < (xPos + totalWidth) && mY >= yPosInp && 
       mY < (yPosInp + tbs.totalHeight)) return true;
       return false;
+    }
+    
+    void keypress(int kc, char k) {
+      if (kc == BACKSPACE) {
+        if (input.length() > 0) {
+          input = input.substring(0, input.length()-1);
+        }
+      } else if (kc == DELETE) {
+        input = "";
+      } else if (kc != SHIFT && kc != CONTROL && kc != ALT && kc != CODED) {
+        input = input + k;
+      }
     }
   }
 }
