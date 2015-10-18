@@ -118,7 +118,7 @@ void draw()
     
     mm.reposition(); //<>//
     ed.reposition();
-    epc.reposition();
+    epc.reposition(); //<>//
   }
   background(backgroundNormal);  // clear screen
   mm.drawMe();

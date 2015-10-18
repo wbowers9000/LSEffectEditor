@@ -20,7 +20,6 @@ class effParameterChange {
     }
     return rtn;
   }
-    
 
   void reposition() {
     // y position of line is 1/4 way down from yPos
@@ -111,14 +110,17 @@ class effParameterChange {
   //-------------------------------------------------------------------------  
   
   class param {
-    String desc;  // description of parameter
-    char type;    // type of input: 'A' alpha, '0' numeric
-    float xPos;    // x position of text area
+    String desc;    // description of parameter
+    char type;      // type of input: 'A' alpha, '0' numeric
+    float xPos;     // x position of text area
     float descWidth;
     float xPosInp;  // x position of input area
     int inputCharCnt;
     float inputWidth;
     float totalWidth;
+    boolean focusMenu;
+    boolean focusOption;
+    String input;   // User input
 
     param() {
       desc = "";
@@ -147,6 +149,11 @@ class effParameterChange {
       xPosInp = descWidth + tbs.charWidth;
       inputWidth = tbs.charWidth * inputCharCnt;
       totalWidth = xPosInp + inputWidth;
+    }
+    
+    void focusing(boolean f, boolean fo) {
+      focusMenu = f;
+      focusOption = fo;
     }
     
     void drawMe() {
