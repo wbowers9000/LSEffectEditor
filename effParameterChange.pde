@@ -38,9 +38,9 @@ class effParameterChange {
   //-------------------------------------------------------------------------  
   
   class param {
-    String desc;  // description of parameter
-    char type;    // type of input: 'A' alpha, '0' numeric
-    float xPos;    // x position of text area
+    String desc;    // description of parameter
+    char type;      // type of input: 'A' alpha, '0' numeric
+    float xPos;     // x position of text area
     float descWidth;
     float xPosInp;  // x position of input area
     int inputCharCnt;
@@ -48,6 +48,7 @@ class effParameterChange {
     float totalWidth;
     boolean focusMenu;
     boolean focusOption;
+    String input;   // User input
 
     param() {
       desc = "";
@@ -91,7 +92,7 @@ class effParameterChange {
         fill(fillHighlight);
       }
       text(desc, xPos + tbs.textXPos, yPos + tbs.textYPos);
-      text("foo", xPosInp + (inputWidth/2), yPos + tbs.textYPos);
+      text("", xPosInp, yPos + tbs.textYPos);
     }
 /*    
       textSize(tbs.mTextSize);
