@@ -10,10 +10,11 @@
 
 // The new text size is in obj.txtSize. The metrics are stored in 
 // the other member variables.
+
 //
 // Text height and width are determined the usual way by calling
 // textAscent(), textDescent(), and textWidth() after calling 
-// computeSize(). 
+// computeSize().
 
 class textAndBoxSize {
   int mTextSize;

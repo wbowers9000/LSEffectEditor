@@ -7,7 +7,8 @@
   * visit http://code.compartmental.net/minim/
   */
 PFont font;
-int globalFontSize = 18;  // starting point for font text sizing
+int startingGlobalFontSize = 18;  // starting point for font text sizing
+int globalFontSize;  // adjusted to window percent size
 
 import ddf.minim.*;
 
@@ -21,6 +22,7 @@ mainMenu mm = new mainMenu();
 
 
 color backgroundNormal;
+color inputBoxColor;
 color backgroundHighlight;
 color fillNormal;
 color fillHighlight;
@@ -40,10 +42,11 @@ int windowPercentSize = 50;
 boolean sizeChange = false;
 
 //String songName = "07  Pink - Funhouse";
+String songName = "Midnight Express Vyl";
 //String songName = "Mystic Rhythms";
 //String songName = "CLOSE ENCOUNTERS OF THE THIRD KIND (Disco 45-) HIGH QUALITY";
 //String songName = "No Cures";
-String songName = "05 - Sweet Emotion";
+//String songName = "05 - Sweet Emotion";
 //String songName = "Apple Loops";
 
 void setup()
@@ -52,16 +55,17 @@ void setup()
   surface.setResizable(true);
   font = loadFont("Arial-BoldMT-18.vlw");
   textFont(font);
-  textSize(globalFontSize);
+  textSize(startingGlobalFontSize);
   
   colorMode(HSB, 360, 100, 100);
   // setup color preferences
-  backgroundNormal = color(0);
+  backgroundNormal = color(0);  // black background
+  inputBoxColor = color(233, 16, 36);  // input box color
   backgroundHighlight = color(46, 49, 46); // for drawing rectangles behind text not background()
-  fillNormal = color(255);
-  fillHighlight = color(179, 99, 99);
-  positionMarkerColor = color(241, 71, 84);
-  waveColor = color(272, 70, 99);
+  fillNormal = color(255);  // white text
+  fillHighlight = color(179, 99, 99);  // highlighted text
+  positionMarkerColor = color(241, 71, 84);  // marker for wave file postion
+  waveColor = color(272, 70, 99);  // sound wave color
   initialEffectColor = color(196, 99, 99);
   borderColor = color(148, 29, 49);
   debugColor = color(60, 99, 99);
@@ -86,6 +90,8 @@ void draw()
   if(sizeChange) {
     prevWindowPercentSize = windowPercentSize;
     surface.setSize(displayWidth * windowPercentSize / 100, displayHeight * windowPercentSize / 100);
+    globalFontSize = int(map(startingGlobalFontSize, 0, 50, 0, windowPercentSize));
+    
     int spc = height / 20;
     int spcA = 0;
     int spcH;
@@ -110,8 +116,8 @@ void draw()
     ed.mHeight = spcH;
     ed.numOfLines = 16;
     
-    mm.reposition();
-    ed.reposition(); //<>//
+    mm.reposition(); //<>//
+    ed.reposition();
     epc.reposition();
   }
   background(backgroundNormal);  // clear screen
@@ -142,17 +148,18 @@ void keyPressed() {
   int k = keyToInt(keyCode, key);
   println(int(keyCode), int(key), keyToInt(keyCode, key));
   // time sync check
-  if(k >= 'a' && k <= 'z') {
-    int tmCheck = player.position() - millis() - msAdjust;
+  if(k >= 'A' && k <= 'Z') {
+    int pp = player.position();
+    int tmCheck = pp - millis() - msAdjust;
     if(tmCheck < 0) tmCheck = -tmCheck;
-    if(tmCheck > 25) println("time out of sync at " + millis() + " by " + tmCheck);
+    if(tmCheck > 30) println("time out of sync at " + millis() + " by " + tmCheck);
 
-    println("effect key");
-    // create a generic effect to display for keystroke
-    // locationStart, spread, hueStart, hueEnd, hueDirection, timeStart, duration, timeBuild
-    ed.efGeneric = new effect(10, 8, 180, 180, 1, player.position(), 300, 0);
+    // Move effect selected by key to play back line to give user some feedback.
+    // This is best done in effectDisplay object since we are mostly dealing with
+    // visuals.
+    ed.processKey(k, pp);
     // save key and time relative to start of song
-    String effLine = nf(player.position(), 7) + ',' + char(k);
+    String effLine = nf(pp, 7) + ',' + char(k);
     LSEffect.append(effLine);
     return;
   }

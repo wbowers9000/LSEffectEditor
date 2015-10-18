@@ -8,7 +8,7 @@ class mainMenu {
   boolean mouseOver(int mX, int mY, int action) {
     boolean rtn = mY >= yPos && mY < (yPos + mHeight);
     if(rtn) {
-      if(action == 0) {println("mouse in mainMenu"); return rtn;}
+      if(action == 0) {/*println("mouse in mainMenu");*/ return rtn;}
       if(action == 1) {doTask(menuItemClicked(mX, mY)); return rtn;}
     }
     return rtn;
@@ -101,37 +101,40 @@ class mainMenu {
       mItm.add(new menuItem("'+': increase window size", 0x008B002B));
       mItm.add(new menuItem("", 0x003D002B)); // second code for '+'
     }
-    
-    // Objects can be added to an ArrayList with add()
   }
   
   
   void reposition() {
     menuItem mi;
-    float xp, yOffset, yp, yPsUpperLimit;
-    float yFirstLine;  // y position of first line
-    
-    textSize(globalFontSize);
-    float tHeight = (textAscent() + textDescent()) * 1.2;
-    tbs.computeSize(tHeight); // compute text and box size
-    // TODO: redo all metrics using tbs.
+    float xp, yp;
+    int numberOfLines, numberOfMenuLines, cntMenuItems;
+
+    cntMenuItems = 0;
+    for(int i = 0; i < mItm.size(); i++) {
+        mi = mItm.get(i);
+        if(mi.tWidth != 0) cntMenuItems++;
+    }
+    numberOfMenuLines = cntMenuItems / 2;
+    if((numberOfMenuLines * 2) != cntMenuItems) numberOfMenuLines++;
+    numberOfLines = numberOfMenuLines + 1; // number of lines plus 1/2 line top and bottom
+    float targetHeight = mHeight / numberOfLines;
+    tbs.comp(globalFontSize + 10, targetHeight); // compute text and box size
+    float startingYPos = yPos + tbs.totalHeight * 0.5;
     xp = 10;
-    yOffset = tbs.totalHeight * 1.2;
-    yFirstLine = yPos + tbs.totalHeight;  // skip one line
-    yPsUpperLimit = yPos + mHeight - tbs.totalHeight;
-    
-    yp = yFirstLine;
-    for (int i = 0; i < mItm.size(); i++) {
-      mi = mItm.get(i);
-      if(mi.tWidth != 0) {
-        mi.xPs = xp;
-        mi.yPs = yp;
-        yp += yOffset;
-        if(yp > yPsUpperLimit) {
-          yp = yFirstLine;
-          xp = width / 2 + 10;
+    int idxItm = 0;
+    for(int n = 0; n < 2; n++) {
+      yp = startingYPos;
+      for(int i = 0; i < numberOfMenuLines; i++) {
+        mi = mItm.get(idxItm);
+        if(mi.tWidth != 0) {
+          mi.xPs = xp;
+          mi.yPs = yp;
+          yp += tbs.totalHeight;
         }
+        idxItm++;
+        if(idxItm >= mItm.size()) break;
       }
+      xp = width / 2 + 10;
     }
   }
   

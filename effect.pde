@@ -56,8 +56,8 @@ class effect {
     this.spread = spread;
     this.hueStart = hueStart;
     this.hueEnd = hueEnd;
-    if (hueDirection == 0) this.hueDirection = 1;
-    else this.hueDirection = hueDirection;
+    if (hueDirection >= 0) this.hueDirection = 1;
+    else this.hueDirection = -1;
     this.timeStart = timeStart;
     this.duration = duration;
     this.timeBuild = timeBuild;
@@ -70,10 +70,7 @@ class effect {
     this.spread = x.spread;
     this.hueStart = x.hueStart;
     this.hueEnd = x.hueEnd;
-    if (hueDirection >= 0) 
-      this.hueDirection = 1;
-    else 
-      this.hueDirection = -1;
+    this.hueDirection = x.hueDirection;
     this.timeStart = x.timeStart;
     this.duration = x.duration;
     this.timeBuild = x.timeBuild;

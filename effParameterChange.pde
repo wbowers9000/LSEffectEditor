@@ -5,6 +5,8 @@ class effParameterChange {
   float yPos;  // one line, all y positions are the same
   float mHeight;
   float spaceBetweenParam;
+  float yPosInp;
+  final int charSpaceBetween = 3;
 
   droplet drplt = new droplet();
   textAndBoxSize tbs = new textAndBoxSize();
@@ -13,7 +15,7 @@ class effParameterChange {
   boolean mouseOver(int mX, int mY, int action) {
     boolean rtn = mY >= yPos && mY < (yPos + mHeight);
     if(rtn) {
-      if(action == 0) {println("mouse in parameter change"); return rtn;}
+      if(action == 0) {/*println("mouse in parameter change");*/ return rtn;}
       if(action == 1) {/* do something */; return rtn;}
     }
     return rtn;
@@ -21,15 +23,89 @@ class effParameterChange {
     
 
   void reposition() {
-    textSize(globalFontSize);
-    tbs.computeSize(textAscent() + textDescent());
-    spaceBetweenParam = tbs.charWidth * 4;
-    // test droplet parameter entry area
+    // y position of line is 1/4 way down from yPos
+    yPosInp = yPos + (mHeight / 4);  // y position of line  
     drplt.reposition();
   }
   
   void drawMe() {
     drplt.drawMe();
+  }
+  
+  //--------------------------------------------------------------------
+  // parameter input classes
+  
+  class droplet {
+    // try and use one line to input parameters for an effect
+    param[] params = new param[5];
+
+    droplet() {
+      params[0] = new param();
+      params[1] = new param();
+      params[2] = new param();
+      params[3] = new param();
+      params[4] = new param();
+    }
+    
+    void doSetup() {
+      params[0].doSetup("Hue Start", '0', 3);
+      params[1].doSetup("Hue End", '0', 3);
+      params[2].doSetup("Hue Dir", '0', 1);
+      params[3].doSetup("Duration", '0', 5);
+      params[4].doSetup("Build Time", '0', 5);
+    }
+
+    /*
+    tbs.computeSize(mHeight / 2);  // 1 line input + 1/2 line top and bottom, 2 lines total
+    yPosInp = yPos + tbs.totalHeight
+    spaceBetweenParam = tbs.charWidth * 4;
+    */
+    
+    // adjust coordinates if screen is resized
+    void reposition() {
+      // calculations to place input parameter areas on screen
+      // find a text size that will fit on a line
+      //
+      // count the total number of characters
+      int cc = 0;
+      for(int i = 0; i < params.length; i++) {
+        cc += params[i].desc.length();
+        cc += params[i].inputCharCnt;
+        cc += charSpaceBetween + 1;  // account for spaces between parameter areas and description and input
+      }
+      cc -= charSpaceBetween;  // subtract extra space at the end
+      // cc now has number of characters
+      float maxLineHeight = mHeight * 0.5;
+      int txtSize = globalFontSize + 10;
+      do {
+        tbs.comp(txtSize, maxLineHeight);
+        txtSize = tbs.mTextSize - 1;
+      } while((tbs.charWidth * cc) > width && txtSize > 2);
+      // tbs.charWidth is now a text size that should work
+      // resize parameter fields
+      spaceBetweenParam = tbs.charWidth * charSpaceBetween;
+      float xp = 0;
+      for(int i = 0; i < params.length; i++) {
+        params[i].reSize();
+        params[i].xPos += xp;
+        params[i].xPosInp += xp;
+        xp += params[i].totalWidth + spaceBetweenParam;
+      }
+      xp -= spaceBetweenParam;
+      // adjust all params so the line is centered
+      xp = (width - xp) / 2;
+      // set the actual x coordinates
+      for(int i = 0; i < params.length; i++) {
+        params[i].xPos += xp;
+        params[i].xPosInp += xp;
+      }
+    }
+
+    void drawMe() {
+      for(int i = 0; i < params.length; i++) {
+        params[i].drawMe();
+      }
+    }
   }
   
   //-------------------------------------------------------------------------  
@@ -74,86 +150,19 @@ class effParameterChange {
     }
     
     void drawMe() {
+      boolean mouseOv = mouseOver(mouseX, mouseY);
       fill(fillNormal);
-      if(mouseOver(mouseX, mouseY, 0)) {
-        fill(backgroundHighlight);
-        rect(xPosInp, yPos, inputWidth, tbs.totalHeight);
-        fill(fillHighlight);
-      }
-      text(desc, xPos + tbs.textXPos, yPos + tbs.textYPos);
-    }
-/*    
-      textSize(tbs.mTextSize);
-      fill(backgroundHighlight);
-      rect(xPosInp, yPos, inputWidth, tbs.totalHeight);
-      fill(fillNormal);
-      text(desc, xPos, yPos + tbs.textYPos);
-*/     
-  }
-  //--------------------------------------------------------------------
-  // parameter input classes
-  
-  class droplet {
-    // try and use one line to input parameters for an effect
-    param[] params = new param[5];
-
-    droplet() {
-      params[0] = new param();
-      params[1] = new param();
-      params[2] = new param();
-      params[3] = new param();
-      params[4] = new param();
+      if(mouseOv) fill(backgroundHighlight);
+      text(desc, xPos + tbs.textXPos, yPosInp + tbs.textYPos);
+      fill(inputBoxColor);
+      if(mouseOv) fill(backgroundHighlight);
+      rect(xPosInp, yPosInp, inputWidth, tbs.totalHeight);
     }
     
-    void doSetup() {
-      params[0].doSetup("Hue Start", '0', 3);
-      params[1].doSetup("Hue End", '0', 3);
-      params[2].doSetup("Hue Dir", '0', 1);
-      params[3].doSetup("Duration", '0', 5);
-      params[4].doSetup("Build Time", '0', 5);
-    }
-    
-    
-    // adjust coordinates if screen is resized
-    void reposition() {
-      // calculations to place input parameter areas on screen
-      // find a text size that will fit on a line
-      float xp;
-      int txtSize = tbs.mTextSize;
-      do {
-        float hh = tbs.totalHeight;
-        // recompute metrics, changes tbs.totalHeight
-        if(hh < 1) {
-          hh = 40;
-          println("fixed??");
-        }
-        tbs.computeSize(hh);
-        spaceBetweenParam = tbs.charWidth * 3;
-        xp = 0;
-        for(int i = 0; i < params.length; i++) {
-          params[i].reSize();
-          xp += params[i].totalWidth + spaceBetweenParam;
-        }
-        println("txtSize: " + txtSize);
-        txtSize--;
-      } while(xp > width && txtSize > 1);
-      txtSize++;
-      xp -= spaceBetweenParam;
-      // adjust all params so they are centered
-      xp = (width - xp) / 2;
-      // set the actual x coordinates
-      for(int i = 0; i < params.length; i++) {
-        params[i].xPos += xp;
-        params[i].xPosInp += xp;
-        xp += params[i].totalWidth + spaceBetweenParam;
-      }
-    }
-
-    void drawMe() {
-      for(int i = 0; i < params.length; i++) {
-        params[i].drawMe();
-      }
+    boolean mouseOver(int mX, int mY) {
+      if(mX >= xPos && mX < (xPos + totalWidth) && mY >= yPosInp && 
+      mY < (yPosInp + tbs.totalHeight)) return true;
+      return false;
     }
   }
-  
 }
