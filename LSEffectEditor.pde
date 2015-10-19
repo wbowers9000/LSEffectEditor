@@ -146,7 +146,14 @@ void mouseMoved() {
 void keyPressed() {
   if(key == 27) key = 0;
   int k = keyToInt(keyCode, key);
+  
+  if(epc.checkFocus()) {
+    epc.keypress(keyCode, key);
+    return;
+  }
+  
   println(int(keyCode), int(key), keyToInt(keyCode, key));
+  
   // time sync check
   if(k >= 'A' && k <= 'Z') {
     int pp = player.position();

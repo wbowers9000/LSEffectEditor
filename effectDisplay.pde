@@ -8,17 +8,6 @@ class effectDisplay {
   final int EFFECTDROPLET = 0;
   final int EFFECTWAVE = 1;
   
-  /*
-  public int locationStart; 
-  public int spread;
-  public int hueStart; 
-  public int hueEnd;
-  public int hueDirection; 
-  public int timeStart; 
-  public int duration;
-  public int timeBuild; // remaining time is decay time
- */
-  
   effectAreaMetrics eam = new effectAreaMetrics();
   effSel[] es = new effSel[effectMax];
   HSBColor[] dispRef = new HSBColor[LEDCnt]; // reference line
@@ -32,7 +21,6 @@ class effectDisplay {
   effObj efob;
   dropletSustain dSust;
   wave waveE;
-  
 //Combineeffect ce = new Combineeffect();
 
   

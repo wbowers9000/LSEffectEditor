@@ -16,7 +16,7 @@ increase time, sustain time, decay time for brightness and span are determined
 by the effect type
 */
 
-
+/*
 class effect {
   public int locationStart; 
   public int spread;
@@ -101,6 +101,7 @@ class effect {
 //
 // symetrical effects
 //
+  
   boolean dropleteffect2(int tm) {
     int elapsedTime;
     int brightness;
@@ -138,57 +139,8 @@ class effect {
     symmetricalFill(locationStart, halfRange, hsbc);
     return true;
   }
-  
-
-  private int computeHue(int ratio) {
-    // ratios based on 256
-    int hue;
-    
-    if(hueRange < 0) {  
-      hueRange = 360 + (hueEnd - hueStart) * hueDirection;
-      if(hueRange >= 360) hueRange = hueRange - 360;
-    }
-    // current hue
-    hue = 360 + hueStart + ((hueRange * ratio) >> 8) * hueDirection;
-    while(hue >= 360) hue = hue - 360;
-    return hue; 
-  }
-
-
-  private int effectRatio(int tm) {
-    // ratios based on 256
-    int timeRatio, elapsedTime; 
-    //boolean inBuild;
-    
-    elapsedTime = tm - timeStart;
-    if(elapsedTime < timeBuild) {
-      // build: go from 0 to max
-      timeRatio = elapsedTime * 256 / timeBuild;
-    }
-    else { 
-      elapsedTime = elapsedTime - timeBuild;
-      // decay: go from max to 0
-      timeRatio = 256 - (elapsedTime * 256 / (duration - timeBuild));  // decay time
-    }
-    return timeRatio;
-  }
-  
-
-  void symmetricalFill(int origin, int span, HSBColor clr) {
-    int n;
-    
-    if(origin >= 0 && origin < efAry.length) efAry[origin].set(clr);
-    for(int i = 0; i < span; i++) {
-      n = origin - i;
-      if(n >= 0 && n < efAry.length) efAry[n].set(clr);
-      n = origin + i;
-      if(n < efAry.length) efAry[n].set(clr);
-    }
-  }
-
 }
-
-//--------------------------------------------------------------------------------------------------
+*/
 class dropletSustain {
   private int tStart;  // start time
   private int tBuild;  // build time
@@ -410,27 +362,30 @@ class dropletSustain {
 }
 
 //--------------------------------------------------------------------------------------------------
-class wave {
+class waveeffect {
   private int tStart;  // start time
   private int tBuild;  // build time
   private int tSustain;  // sustain time
   private int tDecay;  // decay time
-  private int locationStart; 
+  private int locationStart;
+  private int locationEnd;
   private int spread;
   private int hueStart; 
   private int hueEnd;
   private int hueDirection;
   private int duration;
+
   
   public HSBColor[] efAry;
   private int hueRange; // save hue range so we don't recompute
   
-  public wave() {
+  public waveeffect() {
     this.tStart = 0;
     this.tBuild = 0;
     this.tSustain = 0;
     this.tDecay = 0;
     this.locationStart = 0;
+    this.locationEnd = 0;
     this.spread = 0;
     this.hueStart = 0;
     this.hueEnd = 0;
@@ -440,12 +395,13 @@ class wave {
     reset();
   }
 
-  public wave(
+  public waveeffect(
     int tStart,  // start time
     int tBuild,  // build time
     int tSustain,  // sustain time
     int tDecay,  // decay time
     int locationStart,
+    int locationEnd,
     int spread,
     int hueStart,
     int hueEnd,
@@ -456,6 +412,7 @@ class wave {
     this.tSustain = tSustain;
     this.tDecay = tDecay;
     this.locationStart = locationStart;
+    this.locationEnd = 0;
     this.spread = spread;
     this.hueStart = hueStart;
     this.hueEnd = hueEnd;
@@ -466,7 +423,7 @@ class wave {
     reset();
   }
   
-  public wave(dropletSustain x) {
+  public waveeffect(waveeffect x) {
     this.tStart = x.tStart;
     this.tBuild = x.tBuild;
     this.tSustain = x.tSustain;
@@ -517,7 +474,7 @@ class wave {
     HSBColor hsbc = new HSBColor();
     
     if(tm < tStart) return true;  // not yet started 
-    elapsedTime = tm - tStart;    
+    elapsedTime = tm - tStart;
     if(elapsedTime >= (tStart + duration)) return false;
     
     halfSpread = (spread >> 1) + 1;
@@ -542,7 +499,7 @@ class wave {
     for(int i = 0; i < efAry.length; i++) efAry[i].set(-1, 100, 0);
 
     hsbc.set(hue, 100, brightness);
-    symmetricalFill(locationStart, halfRange, hsbc);
+    symmetricalFill(iMapQuick(tm, tStart, tStart + duration, locationStart, locationEnd), halfRange, hsbc);
     return true;
   }
   
