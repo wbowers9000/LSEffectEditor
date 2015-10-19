@@ -20,7 +20,7 @@ class effectDisplay {
   
   effObj efob;
   dropletSustain dSust;
-  wave waveE;
+  waveeffect waveE;
 //Combineeffect ce = new Combineeffect();
 
   
@@ -57,7 +57,7 @@ class effectDisplay {
         displayEffectLine(dSust.efAry, xPos, yPos);
         break;
       case EFFECTWAVE:
-        waveE = (wave) obj;
+        waveE = (waveeffect) obj;
         waveE.build(time);
         displayEffectLine(waveE.efAry, xPos, yPos);
         break;
@@ -73,7 +73,7 @@ class effectDisplay {
         dSust.tStart = time;
         break;
       case EFFECTWAVE:
-        waveE = (wave) obj;
+        waveE = (waveeffect) obj;
         waveE.tStart = time;
         break;
       default:
