@@ -32,6 +32,10 @@ class Combineeffect {
   }
 
 
+  void combine(int combineType, effect ef, int tm) {
+    if(ef.active(tm)) combine(combineType, ef.efAry);
+  }
+
   void combine(int combineType, HSBColor [] ica) {
     for(int i = 0; i < ica.length; i++) ceAry[i].combine(combineType, ica[i]);
   }

@@ -18,7 +18,7 @@ class effParameterChange {
     if(rtn) {
       if(action == 0) {/*println("mouse in parameter change");*/ return rtn;}
       if(action == 1) {focus = true; drplt.focusing(focus); return rtn;}
-      } else {
+    } else {
       if(action == 1) {focus = false; drplt.focusing(focus); return rtn;}
     }
     return rtn;
@@ -41,6 +41,7 @@ class effParameterChange {
   void keypress(int kc, char k) {
     drplt.keypress(kc, k);
   }
+  
   //--------------------------------------------------------------------
   // parameter input classes
   
@@ -187,8 +188,10 @@ class effParameterChange {
       fill(inputBoxColor);
       if(mouseOv) fill(backgroundHighlight);
       rect(xPosInp, yPosInp, inputWidth, tbs.totalHeight);
+      fill(fillNormal);
+      text(input, xPosInp, yPos + tbs.textYPos);
     }
-
+    
     boolean mouseOver(int mX, int mY) {
       if(mX >= xPos && mX < (xPos + totalWidth) && mY >= yPosInp && 
       mY < (yPosInp + tbs.totalHeight)) return true;
