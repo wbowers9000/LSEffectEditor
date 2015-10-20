@@ -139,6 +139,50 @@ class effect {
     symmetricalFill(locationStart, halfRange, hsbc);
     return true;
   }
+  
+  private int computeHue(int ratio) {
+    // ratios based on 256
+    int hue;
+    
+    if(hueRange < 0) {  
+      hueRange = 360 + (hueEnd - hueStart) * hueDirection;
+      if(hueRange >= 360) hueRange = hueRange - 360;
+    }
+    // current hue
+    hue = 360 + hueStart + ((hueRange * ratio) >> 8) * hueDirection;
+    while(hue >= 360) hue = hue - 360;
+    return hue; 
+  }
+  
+  private int effectRatio(int tm) {
+    // ratios based on 256
+    int timeRatio, elapsedTime; 
+    //boolean inBuild;
+    
+    elapsedTime = tm - timeStart;
+    if(elapsedTime < timeBuild) {
+      // build: go from 0 to max
+      timeRatio = elapsedTime * 256 / timeBuild;
+    }
+    else { 
+      elapsedTime = elapsedTime - timeBuild;
+      // decay: go from max to 0
+      timeRatio = 256 - (elapsedTime * 256 / (duration - timeBuild));  // decay time
+    }
+    return timeRatio;
+  }
+  
+  void symmetricalFill(int origin, int span, HSBColor clr) {
+    int n;
+    
+    if(origin >= 0 && origin < efAry.length) efAry[origin].set(clr);
+    for(int i = 0; i < span; i++) {
+      n = origin - i;
+      if(n >= 0 && n < efAry.length) efAry[n].set(clr);
+      n = origin + i;
+      if(n < efAry.length) efAry[n].set(clr);
+    }
+  }
 }
 
 class dropletSustain {

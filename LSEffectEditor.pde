@@ -116,9 +116,9 @@ void draw()
     ed.mHeight = spcH;
     ed.numOfLines = 16;
     
-    mm.reposition(); //<>//
+    mm.reposition();
     ed.reposition();
-    epc.reposition(); //<>//
+    epc.reposition();
   }
   background(backgroundNormal);  // clear screen
   mm.drawMe();
