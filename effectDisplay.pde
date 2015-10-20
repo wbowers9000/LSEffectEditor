@@ -29,7 +29,7 @@ class effectDisplay {
   int testPatternStartColor = 90;
   effObj efob;
   dropletSustain dSust;
-  wave waveE;
+  waveeffect waveE;
 //Combineeffect ce = new Combineeffect();
   
   boolean mouseOver(int mX, int mY, int action) {
