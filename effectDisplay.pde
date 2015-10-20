@@ -5,6 +5,8 @@ class effectDisplay {
   int numOfLines = effectMax + 2;
   textAndBoxSize tbs = new textAndBoxSize();
   
+  final int EFFECTDROPLET = 0;
+  final int EFFECTWAVE = 1;
   /*
   public int locationStart; 
   public int spread;
@@ -18,12 +20,16 @@ class effectDisplay {
   
   effectAreaMetrics eam = new effectAreaMetrics();
   effSel[] es = new effSel[effectMax];
-  HSBColor[] refDisp = new HSBColor[LEDCnt]; // reference line
-  effect efPlayBack; // play back line
+  HSBColor[] dispRef = new HSBColor[LEDCnt]; // reference line
+  HSBColor[] dispPlayBack = new HSBColor[LEDCnt]; // play back line
+  HSBColor[] CC = new HSBColor[LEDCnt]; // generic array for reuse
   float yPosReference; // reference line
   float yPosPlayBack; // play back line
   boolean testPatternDisplay = true;
   int testPatternStartColor = 90;
+  effObj efob;
+  dropletSustain dSust;
+  wave waveE;
 //Combineeffect ce = new Combineeffect();
   
   boolean mouseOver(int mX, int mY, int action) {
@@ -34,7 +40,57 @@ class effectDisplay {
     }
     return rtn;
   }
+  //-------------------------------------------------------------------------------------
+  class effObj {
+    int type;  // EFFECTDROPLET or EFFECTWAVE
+    Object obj;
     
+    effObj(int type, Object obj) {
+      this.type = type;
+      this.obj = obj;
+    }
+    
+    effObj(effObj x) {
+      type = x.type;
+      obj = x.obj;
+    }
+    
+    void computeAndDraw(int time, float xPos, float yPos) {
+      switch(type) {
+      case EFFECTDROPLET:
+        dSust = (dropletSustain) obj;
+        dSust.build(time);
+        displayEffectLine(dSust.efAry, xPos, yPos);
+        break;
+      case EFFECTWAVE:
+        waveE = (wave) obj;
+        waveE.build(time);
+        displayEffectLine(waveE.efAry, xPos, yPos);
+        break;
+      default:
+        break;
+      }
+    }
+    
+    void setStartTime(int time) {
+      switch(type) {
+      case EFFECTDROPLET:
+        dSust = (dropletSustain) obj;
+        dSust.tStart = time;
+        break;
+      case EFFECTWAVE:
+        waveE = (wave) obj;
+        waveE.tStart = time;
+        break;
+      default:
+        break;
+      }
+    }
+    
+    
+    
+  }
+  
   //--------------------------------------------------------------------------------------
   // effectAreaMetrics is where all computed measurements for the effect area are stored
   // metrics need only be recomputed once when screen size changes
@@ -78,28 +134,41 @@ class effectDisplay {
     int location = 8;
     int spread = 6;
     int startHue = 180;
-    int duration = 3000;
-    int build = 0;
+    int sustain = 1000;
+    int decay = 0;
 
     for(int i = 0; i < effectMax; i++) {
-      // locationStart, spread, hueStart, hueEnd, hueDirection, timeStart, duration, timeBuild
-      effect effct = new effect(location, spread, startHue, startHue, 1, 0, duration, build);
+/*      
+  public dropletSustain(
+    int tStart,  // start time
+    int tBuild,  // build time
+    int tSustain,  // sustain time
+    int tDecay,  // decay time
+    int locationStart,
+    int spread,
+    int hueStart,
+    int hueEnd,
+    int hueDirection
+    ) {
+*/      
+      dSust = new dropletSustain(0, 0, sustain, decay, location, spread, startHue, startHue, 1);
       location += 8;
       if(location > LEDCnt) location = 0;
       spread++;
       if(spread > 14) spread = 6;
       startHue += 25;
-      duration += 130;
-      build += 10;
-      es[i] = new effSel(ch, effct);
+      sustain += 200;
+      decay += 70;
+      efob = new effObj(EFFECTDROPLET, dSust);
+      es[i] = new effSel(ch, efob);
       ch++;
     }
   }
 
   
   void setupReferenceDisplay() {
-    for(int i = 0; i < refDisp.length; i++) refDisp[i] = new HSBColor();
-    for(int i = 0; i < refDisp.length; i += 2) refDisp[i].set((i * 5) % 360, 100, 100);
+    for(int i = 0; i < dispRef.length; i++) dispRef[i] = new HSBColor();
+    for(int i = 0; i < dispRef.length; i += 2) dispRef[i].set((i * 5) % 360, 100, 100);
   }
 
 
@@ -110,14 +179,20 @@ class effectDisplay {
     for(int i = 0; i < es.length; i++) es[i].computePlacement(i);
   }
   
+  // Here we do what it takes to setup the color array to display the effect on the 
+  // play back line.
+  // efob must be pointing to and effect object
+      // TODO:
+      // Vector on what mode we are in. 
+      // If the player is playing, display the moving effect.
+      // if the player is not playing, display the "highlight" of the effect,
+      // i.e. the most prominant part of the effect.
   void drawMe() {
     noStroke();
-    if(ed.efPlayBack != null) {
-      ed.efPlayBack.dropleteffect2(player.position());
-      displayEffectLine(ed.efPlayBack.efAry, eam.xPsEffect, yPosPlayBack);  // play back line
-    }
+    displayEffectLine(dispRef, eam.xPsEffect, yPosReference);  // refernce line
+    // display play back line
+    if(efob != null) efob.computeAndDraw(player.position(), eam.xPsEffect, yPosPlayBack);
     for(int i = 0; i < es.length; i++) es[i].drawMe();
-    displayEffectLine(refDisp, eam.xPsEffect, yPosReference);  // refernce line
   }
   
   void effectClicked() {
@@ -125,15 +200,14 @@ class effectDisplay {
     return;
   }
   
-  
+  // pick the effect that matches the key and display is on play back line
   void processKey(int ky, int time) {
     int i = 0;
-    println("ed.processKey() ky: " + ky + "  time: " + time);
+    //println("ed.processKey() ky: " + ky + "  time: " + time);
     while(ky != es[i].esk.ch && i < es.length) i++;
     if(ky == es[i].esk.ch) {
-      println("new effect #" + i);
-      ed.efPlayBack = new effect(es[i].eff);
-      ed.efPlayBack.timeStart = time;
+      //println("new effect #" + i);
+      es[i].eo.setStartTime(time);
     }
   }
 
@@ -155,28 +229,31 @@ class effectDisplay {
   
   class effSel {
     effSelKey esk;
-    effect eff;
-    int effType;
+    //effect eff;
+    effObj eo;
     float xPsEff;
     float yPsEff;
   
+  // is this needed?
     effSel() {
       esk = null;
-      eff = null;
-      effType = 0;
+      //eff = null;
+      eo = null;
       xPsEff = 0;
       yPsEff = 0;
     }
   
-    effSel(char ch, effect ef) {
+    effSel(char ch, effObj efo) {
       esk = new effSelKey(ch);
-      eff = new effect(ef);
+      //eff = new effect(ef);
+      eo = new effObj(efo);
+/*      
       // display a test pattern for developement
       if(testPatternDisplay) {
         setupTestDisplay(testPatternStartColor, eff.efAry);
         testPatternStartColor += 15;
       }
-      effType = 0;
+*/      
       xPsEff = 0;
       yPsEff = 0;
     }
@@ -193,13 +270,12 @@ class effectDisplay {
     
     void drawMe() {
       esk.drawMe();
-      // draw example effect by computing the effect at time zero.
-      eff.dropleteffect2(millis() % 5000);
-      displayEffectLine(eff.efAry, eam.xPsEffect, yPsEff);
+      // draw example effect by computing the effect from time zero.
+      if(eo != null) eo.computeAndDraw(millis() % 5000, eam.xPsEffect, yPsEff);
     }
   }
 
-  // menu item class
+  // This class draws the key on the left side of the screen associated with an effect.
   class effSelKey {
     char ch;
     float xP;

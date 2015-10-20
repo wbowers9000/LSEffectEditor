@@ -185,6 +185,7 @@ class effect {
   }
 }
 
+//--------------------------------------------------------------------------------------------------
 class dropletSustain {
   private int tStart;  // start time
   private int tBuild;  // build time
@@ -237,6 +238,22 @@ class dropletSustain {
     if (hueDirection == 0) this.hueDirection = 1;
     else this.hueDirection = hueDirection;
     this.duration = tStart + tBuild + tSustain + tDecay;
+    this.efAry = new HSBColor[LEDCnt];
+    reset();
+  }
+  
+  public dropletSustain(dropletSustain x) {
+    this.tStart = x.tStart;
+    this.tBuild = x.tBuild;
+    this.tSustain = x.tSustain;
+    this.tDecay = x.tDecay;
+    this.locationStart = x.locationStart;
+    this.spread = x.spread;
+    this.hueStart = x.hueStart;
+    this.hueEnd = x.hueEnd;
+    this.hueDirection = x.hueDirection;
+    this.duration = x.duration;
+    this.tBuild = x.tBuild;
     this.efAry = new HSBColor[LEDCnt];
     reset();
   }
@@ -389,6 +406,7 @@ class dropletSustain {
   }
 }
 
+//--------------------------------------------------------------------------------------------------
 class waveeffect {
   private int tStart;  // start time
   private int tBuild;  // build time
@@ -446,6 +464,22 @@ class waveeffect {
     if (hueDirection == 0) this.hueDirection = 1;
     else this.hueDirection = hueDirection;
     this.duration = tStart + tBuild + tSustain + tDecay;
+    this.efAry = new HSBColor[LEDCnt];
+    reset();
+  }
+  
+  public waveeffect(dropletSustain x) {
+    this.tStart = x.tStart;
+    this.tBuild = x.tBuild;
+    this.tSustain = x.tSustain;
+    this.tDecay = x.tDecay;
+    this.locationStart = x.locationStart;
+    this.spread = x.spread;
+    this.hueStart = x.hueStart;
+    this.hueEnd = x.hueEnd;
+    this.hueDirection = x.hueDirection;
+    this.duration = x.duration;
+    this.tBuild = x.tBuild;
     this.efAry = new HSBColor[LEDCnt];
     reset();
   }
