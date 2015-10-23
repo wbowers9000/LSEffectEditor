@@ -29,7 +29,7 @@ class effectDisplay {
   int testPatternStartColor = 90;
   effObj efob;
   dropletSustain dSust;
-  waveeffect waveE;
+  waveEffect waveE;
 //Combineeffect ce = new Combineeffect();
   
   boolean mouseOver(int mX, int mY, int action) {
@@ -63,7 +63,7 @@ class effectDisplay {
         displayEffectLine(dSust.efAry, xPos, yPos);
         break;
       case EFFECTWAVE:
-        waveE = (wave) obj;
+        waveE = (waveEffect) obj;
         waveE.build(time);
         displayEffectLine(waveE.efAry, xPos, yPos);
         break;
@@ -79,7 +79,7 @@ class effectDisplay {
         dSust.tStart = time;
         break;
       case EFFECTWAVE:
-        waveE = (wave) obj;
+        waveE = (waveEffect) obj;
         waveE.tStart = time;
         break;
       default:

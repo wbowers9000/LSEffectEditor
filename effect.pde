@@ -407,7 +407,7 @@ class dropletSustain {
 }
 
 //--------------------------------------------------------------------------------------------------
-class waveeffect {
+class waveEffect {
   private int tStart;  // start time
   private int tBuild;  // build time
   private int tSustain;  // sustain time
@@ -424,7 +424,7 @@ class waveeffect {
   public HSBColor[] efAry;
   private int hueRange; // save hue range so we don't recompute
   
-  public waveeffect() {
+  public waveEffect() {
     this.tStart = 0;
     this.tBuild = 0;
     this.tSustain = 0;
@@ -440,7 +440,7 @@ class waveeffect {
     reset();
   }
 
-  public waveeffect(
+  public waveEffect(
     int tStart,  // start time
     int tBuild,  // build time
     int tSustain,  // sustain time
@@ -468,7 +468,7 @@ class waveeffect {
     reset();
   }
   
-  public waveeffect(dropletSustain x) {
+  public waveEffect(dropletSustain x) {
     this.tStart = x.tStart;
     this.tBuild = x.tBuild;
     this.tSustain = x.tSustain;
