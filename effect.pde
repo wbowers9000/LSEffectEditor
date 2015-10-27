@@ -544,7 +544,7 @@ class waveEffect {
     for(int i = 0; i < efAry.length; i++) efAry[i].set(-1, 100, 0);
 
     hsbc.set(hue, 100, brightness);
-    symmetricalFill(iMapQuick(tm, tStart, tStart + duration, locationStart, locationEnd), halfRange, hsbc);
+    symmetricalFill(iMapQuick(tm, tStart, tStart + duration, locationStart, locationEnd), halfRange*2, hsbc);
     return true;
   }
   
@@ -590,8 +590,8 @@ class waveEffect {
     for(int i = 0; i < span; i++) {
       n = origin - i;
       if(n >= 0 && n < efAry.length) efAry[n].set(clr);
-      n = origin + i;
-      if(n < efAry.length) efAry[n].set(clr);
+      //n = origin + i;
+      //if(n < efAry.length) efAry[n].set(clr);
     }
   }
     

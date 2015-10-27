@@ -134,6 +134,7 @@ class effectDisplay {
     int location = 8;
     int spread = 6;
     int startHue = 180;
+    int build = 0;
     int sustain = 1000;
     int decay = 0;
 
@@ -151,15 +152,18 @@ class effectDisplay {
     int hueDirection
     ) {
 */      
-      dSust = new dropletSustain(0, 0, sustain, decay, location, spread, startHue, startHue, 1);
+      dSust = new dropletSustain(0, build, sustain, decay, location, spread, startHue, startHue, 1);
+      waveE = new waveEffect(0, build, sustain, decay, location, location+8, spread, startHue, startHue, 1);
       location += 8;
       if(location > LEDCnt) location = 0;
       spread++;
       if(spread > 14) spread = 6;
       startHue += 25;
+      build += 100;
       sustain += 200;
       decay += 70;
-      efob = new effObj(EFFECTDROPLET, dSust);
+      if(ch%2 == EFFECTDROPLET) efob = new effObj(EFFECTDROPLET, dSust);
+      else efob = new effObj(EFFECTWAVE, waveE);
       es[i] = new effSel(ch, efob);
       ch++;
     }
