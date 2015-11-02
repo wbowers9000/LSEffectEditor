@@ -153,7 +153,7 @@ class effectDisplay {
     ) {
 */      
       dSust = new dropletSustain(0, build, sustain, decay, location, spread, startHue, startHue, 1);
-      waveE = new waveEffect(0, build, sustain, decay, location, location+8, spread, startHue, startHue, 1);
+      waveE = new waveEffect(0, build, sustain, decay, location, location+4, spread, startHue, startHue, 1);
       location += 8;
       if(location > LEDCnt) location = 0;
       spread++;
