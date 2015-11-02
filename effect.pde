@@ -590,9 +590,6 @@ class waveEffect {
     if(origin >= 0 && origin < efAry.length) efAry[origin].set(clr);
     for(int i = 0; i < span; i++) {
       clr.brt = iMapQuick(i, 0, int(span*1.8), 0, b);
-      if (i > span-(span/4)) {
-        clr.brt = iMapQuick(i, span-(span/4), span, 0, b);
-      }
       n = origin - i;
       if(n >= 0 && n < efAry.length) efAry[n].set(clr);
       //n = origin + i;
