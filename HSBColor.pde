@@ -11,9 +11,9 @@ go to zero.
 */
 
 class HSBColor {
-  int hue;
-  int sat;  // saturation
-  int brt;  // brightness
+  public int hue;
+  public int sat;  // saturation
+  public int brt;  // brightness
   
   HSBColor() {
     // set object to black of indefined hue
